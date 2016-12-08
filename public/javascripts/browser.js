@@ -4,10 +4,12 @@
     var input = $('#input');
     var myColor = false;
     var myName = false;
-    var connection = new WebSocket('ws:' + window.location.href.substring(window.location.protocol.length));
+    var href = window.location.href.substring(window.location.protocol.length);
+
+    var connection = new WebSocket('ws:' + href);
 
     connection.onopen = function () {
-        status.text('Choose name:');
+        status.text('输入昵称:');
     };
     connection.onmessage = function (message) {
       var json = JSON.parse(message.data);
@@ -19,17 +21,20 @@
                        json.data.color, new Date(json.data.time));
         } 
     };
-
-    input.keydown(function(e) {
-        if (e.keyCode === 13) {
-            var msg = $(this).val();
-            if (!msg)    return;
-            connection.send(msg);
-            $(this).val('');
-            if (myName === false) {
-                myName = msg;
-            }
-        }
+  function send() {
+      var msg = input.val();
+      if (!msg)    return;
+      connection.send(msg);
+      input.val('');
+      if (myName === false) {
+        myName = msg;
+      }
+  }
+    $('.send').on('click',send);
+    input.keydown(function () {
+      if(event.keyCode === 13){
+        send()
+      }
     });
 
 
